@@ -24,6 +24,7 @@ apiServices.getContacts = async () => {
         console.log("Error trayendo los contacts:", error); 
         throw error
     }
+    
 }
 
 // funcion para agregar un contacto a la agenda
