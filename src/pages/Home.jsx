@@ -9,17 +9,24 @@ export const Home = () => {
 
 	useEffect(()=> {
 
-		const fetchGetContactos = async () => {
-			const response = await apiServices.getContacts();
+		apiServices.getContacts().then(response => {
 			dispatch({ type: "GET_CONTACTS", payload:  [...store.contactos, ...response] });
 			console.log(response);
+		})
+		// const fetchGetContactos = async () => {
+		// 	const response = await apiServices.getContacts();
+		// 	dispatch({ type: "GET_CONTACTS", payload:  [...store.contactos, ...response] });
+		// 	console.log(response);
 			
-		}
-		fetchGetContactos();
+		// }
+		// fetchGetContactos();
 
 	}, [])
 
-
+	const handleSaludo = () => {
+		console.log(store.saludoEnIngles);
+		return dispatch({ type: "SALUDO" });
+	}
 
 	return (
 		<div className="text-center mt-5">
@@ -42,6 +49,8 @@ export const Home = () => {
 				})}
 
 			</ul>
+			<button type="button" className="btn btn-info" onClick={handleSaludo}>Change Language!</button>
+			<h2>{store.saludoEnIngles == true ? "Hola Feyre querida!" : "Hello Feyre Darling!"}</h2>
 		</div>
 	);
 };
