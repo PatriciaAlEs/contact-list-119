@@ -8,6 +8,7 @@ export const VisitCard = () => {
     const { store, dispatch } = useGlobalReducer();
 
     const contacto = store.contactos.find(contact => contact.id == id);
+    const contactoBase = store.contactosBase.find(contact => contact.id == id);
 
     console.log("ID del contacto:", id);
     console.log("Contacto encontrado:", contacto);
@@ -20,6 +21,11 @@ export const VisitCard = () => {
             <p>{contacto?.email}</p>
             <p>{contacto?.phone}</p>
             <p>{contacto?.address}</p>
+            
+            <h4>{store.contactoBase?.name}</h4>
+            <p>{contactoBase?.email}</p>
+            <p>{contactoBase?.phone}</p>
+            <p>{contactoBase?.address}</p>
         </div>
     );
 };
