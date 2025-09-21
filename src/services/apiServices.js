@@ -1,13 +1,31 @@
 // aqui iran mis funciones que hacen llamadas a la API
-const apiServices = { }
-const USER = 'Calenine_Archeron' 
+const apiServices = {}
+const USER = 'Calenine_Archeron'
 const API_URL = `https://playground.4geeks.com/contact/`
 
 
 // funcion para crear una usuario (que irá ligado a una agenda)
-apiServices.createUserAgenda = async () => {
-    
-}
+apiServices.createUserAgenda = (slug) => {
+    return fetch(`${API_URL}agendas/${slug}`, { method: "POST" })
+        .then((resp) => {
+            if (resp.ok) {
+                console.log("Agenda creada con exito--->", resp);
+                return true};
+            return resp.json().then((data) => {
+                if (data?.detail?.includes("already exists")) {
+                    console.log("Agenda ya existente.");
+                    return true;
+                }
+                console.log("No se pudo crear agenda:", data);
+                return false;
+            });
+        })
+        .catch((error) => {
+            console.warn("Error creando agenda:", error);
+            return false;
+        });
+};
+
 
 //funcion para obtener los contactos de la agenda
 // apiServices.getContacts = async () => {
@@ -24,42 +42,59 @@ apiServices.createUserAgenda = async () => {
 //         console.log("Error trayendo los contacts:", error); 
 //         throw error
 //     }
-    
+
 // }
 
-apiServices.getContacts = () => {
+apiServices.getContacts = (slug) => {
     return fetch(`${API_URL}agendas/${USER}/contacts`)
-        .then(response => {
-            if (!response.ok) {
-                console.warn("Agenda no encontrada, creando una nueva...");
-                return apiServices.createUserAgenda().then(() => []); 
-                // devolvemos [] para que el front no explote
+        .then((resp) => {
+            if (resp.status === 404) {
+                console.info("Agenda no encontrada, creando…");
+                return apiServices.createUserAgenda(USER).then(() => []);
             }
-            return response.json();
+            if (!resp.ok) {
+                console.warn("GET contacts not work:", resp.status);
+                return [];
+            }
+            return resp.json();
         })
-        .then(data => {
-            // Si ya era un array vacío, llega tal cual
-            // Si era respuesta correcta, sacamos .contacts
-            return data.contacts || [];
+        .then((data) => {
+            return data.contacts || [];  // aseguramos un array
         })
-        .catch(error => {
-            console.log("Error trayendo los contacts:", error);
-            throw error;
+        .catch((error) => {
+            console.warn("Error trayendo contactos:", error);
+            return [];
         });
 };
 
 
+
 // funcion para agregar un contacto a la agenda
 apiServices.creteContact = async () => {
-
+    return fetch(`${API_URL}agendas/${USER}/contacts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contact)
+    })
+        .then(response => response.json() || [])
+        .then(data => {
+            console.log('Contacto creado:', data);
+            return data.contacts || [];
+        })
+        .catch(error => {
+            console.error('Error creando contacto:', error);
+            throw error;
+        });
 }
 
 // funcion para editar un contacto de la agenda
-apiServices.editContact = async () => { 
+apiServices.editContact = async () => {
 }
 
 // funcion para eliminar un contacto de la agenda
-apiServices.deleteContact = async () => {  
+apiServices.deleteContact = async () => {
 }
 
 export default apiServices;

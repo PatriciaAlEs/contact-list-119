@@ -23,6 +23,8 @@ export const Home = () => {
 		// fetchGetContactos();
 	}, [])
 
+
+
 	const handleSaludo = () => {
 		console.log(store.saludoEnIngles);
 		return dispatch({ type: "SALUDO" });
